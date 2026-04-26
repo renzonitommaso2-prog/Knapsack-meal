@@ -2,45 +2,34 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#222222">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/180px-GitHub_Invertocat_Logo.svg.png">
     <title>Personal Dashboard</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #444444, #222222, #111111);
-            color: #eeeeee;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+            margin: 0; padding: 0; font-family: Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #444444, #222222, #111111); color: #eeeeee;
+            min-height: 100vh; min-height: -webkit-fill-available;
         }
-
-        .top-nav {
-            background: rgba(40, 40, 40, 0.8);
-            border-bottom: 1px solid #111;
-            padding: 10px 20px;
-            display: flex;
-            gap: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .top-nav::-webkit-scrollbar { display: none; }
         
-        .top-nav a {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 5px 10px;
-            border: 1px solid transparent;
-            flex-shrink: 0;
+        a, button, input { touch-action: manipulation; }
+
+        /* Barra in alto riproporzionata per occupare esattamente il 100% */
+        .top-nav {
+            background: rgba(40, 40, 40, 0.8); border-bottom: 1px solid #111;
+            display: flex; width: 100%; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
-        .top-nav a:hover { background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; }
-        .top-nav a.active { background: rgba(255,255,255,0.15); border: 1px inset #555; color: #fff; font-weight: bold; }
+        .top-nav a {
+            flex: 1; text-align: center; color: #ccc; text-decoration: none; font-size: 13px;
+            padding: 15px 0; border-right: 1px solid #222; box-sizing: border-box;
+        }
+        .top-nav a:last-child { border-right: none; }
+        .top-nav a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .top-nav a.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);}
 
         .container { max-width: 1000px; margin: 40px auto; padding: 0 20px 80px 20px; }
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
@@ -48,21 +37,10 @@
         h1 { font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 30px;}
 
         .app-card {
-            background: rgba(80, 80, 80, 0.35);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.6);
-            border-radius: 0;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-decoration: none;
-            display: block;
-            color: inherit;
+            background: rgba(80, 80, 80, 0.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.6); border-radius: 0; padding: 30px; text-align: center;
+            cursor: pointer; transition: background 0.2s; text-decoration: none; display: block; color: inherit;
         }
         .app-card:hover { background: rgba(100, 100, 100, 0.45); }
         .app-card h2 { margin-top: 0; font-weight: normal; border-bottom: none;}

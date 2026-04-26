@@ -2,100 +2,77 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#222222">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Gym Tracker</title>
     <style>
-        :root {
-            --bg-color: #1e1e1e; --panel-bg: #2d2d2d; --input-bg: #141414; --border-color: #4a4a4a;
-            --text-main: #ffffff; --text-muted: #a0a0a0; --btn-bg: #444444; --btn-hover: #555555;
-            --btn-primary: #e0e0e0; --btn-primary-text: #111111;
-        }
-
-        body {
-            margin: 0; padding: 0; font-family: Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color); color: var(--text-main); font-size: 16px;
-            min-height: 100vh; min-height: -webkit-fill-available;
-        }
-
-        .top-nav {
-            background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
-            padding: 10px 20px; display: flex; gap: 20px; margin-bottom: 30px;
-            overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
-        .top-nav::-webkit-scrollbar { display: none; }
+        body { margin: 0; padding: 0; font-family: Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #444444, #222222, #111111); color: #eeeeee; min-height: 100vh; min-height: -webkit-fill-available; }
         
-        .top-nav a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.1em; transition: color 0.2s; flex-shrink: 0; padding-bottom: 2px; }
-        .top-nav a:hover { color: var(--text-main); }
-        .top-nav a.active { color: var(--text-main); border-bottom: 2px solid var(--text-main); }
+        a, button, input, textarea { touch-action: manipulation; }
 
+        .top-nav { background: rgba(40, 40, 40, 0.8); border-bottom: 1px solid #111; display: flex; width: 100%; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .top-nav a { flex: 1; text-align: center; color: #ccc; text-decoration: none; font-size: 13px; padding: 15px 0; border-right: 1px solid #222; box-sizing: border-box; }
+        .top-nav a:last-child { border-right: none; }
+        .top-nav a.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+
+        .aero-glass { background: rgba(80, 80, 80, 0.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.6); border-radius: 0; padding: 20px; margin-bottom: 20px; }
         .container { max-width: 1000px; margin: auto; padding: 0 20px 80px 20px; }
         
-        .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 0; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-
-        h1, h2, h3 { margin-top: 0; color: var(--text-main); font-weight: normal; margin-bottom: 20px; }
+        h1, h2, h3 { margin-top: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
         
+        /* Font-size 16px per evitare lo zoom, UI stile Vista forum */
         input[type="number"], input[type="text"], input[type="file"], textarea {
-            background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 0; padding: 10px;
-            color: var(--text-main); width: 100%; box-sizing: border-box; margin-top: 6px; font-family: inherit; font-size: 14px;
+            background: rgba(200, 200, 200, 0.9); border: 1px solid #111; border-top: 2px solid #000; border-left: 2px solid #000;
+            border-radius: 0; padding: 8px; color: #000; width: 100%; box-sizing: border-box; margin-top: 5px;
+            font-family: Tahoma, Geneva, sans-serif; font-size: 16px !important;
         }
-        input:focus, textarea:focus { outline: 1px solid var(--text-muted); border-color: transparent; }
+        input:focus, textarea:focus { outline: 1px dotted #ccc; background: #ffffff; }
         
-        button { background-color: var(--btn-bg); border: 1px solid var(--border-color); border-radius: 0; color: var(--text-main); padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: normal; transition: background-color 0.2s; }
-        button:hover { background-color: var(--btn-hover); }
-        
-        .btn-primary { background-color: var(--btn-primary); color: var(--btn-primary-text); border: none; font-weight: bold;}
-        .btn-primary:hover { background-color: #ffffff; }
+        button { background: linear-gradient(to bottom, #f0f0f0, #c0c0c0); border: 1px solid #555; border-right: 1px solid #111; border-bottom: 1px solid #111; border-radius: 0; color: #000; padding: 8px 15px; cursor: pointer; font-family: Tahoma, Geneva, sans-serif; font-size: 14px; font-weight: bold;}
+        button:hover { background: linear-gradient(to bottom, #ffffff, #d0d0d0); }
+        button:active { background: #b0b0b0; border: 1px solid #111; border-top: 1px solid #000; border-left: 1px solid #000; padding: 9px 14px 7px 16px; }
+        .btn-danger { background: linear-gradient(to bottom, #ff9999, #cc0000); color: white; border-color: #550000; }
 
-        .btn-danger { background-color: #3b1c1c; color: #ff6b6b; border-color: #5c2b2b; }
-        .btn-danger:hover { background-color: #5c2b2b; color: #ffffff; }
-
-        .tabs {
-            display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border-color);
-            overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
-        .tabs::-webkit-scrollbar { display: none; }
-        
-        .tab-btn {
-            background: none; border: none; color: var(--text-muted); padding: 10px 30px; font-size: 1.2em; cursor: pointer;
-            margin-right: 5px; border: 1px solid transparent; border-bottom: none; flex-shrink: 0;
-        }
-        .tab-btn.active { background-color: var(--panel-bg); color: var(--text-main); border: 1px solid var(--border-color); border-bottom: 2px solid var(--panel-bg); margin-bottom: -2px; font-weight: bold; }
+        /* Tabs divise esattamente in 3 colonne senza scroll */
+        .tabs { display: flex; width: 100%; margin-bottom: 20px; border-bottom: 1px solid #555; }
+        .tab-btn { flex: 1; background: rgba(40, 40, 40, 0.6); border: 1px solid #111; border-bottom: none; color: #aaa; padding: 12px 0; font-size: 14px; cursor: pointer; text-align: center; }
+        .tab-btn.active { background: rgba(80, 80, 80, 0.5); color: #fff; font-weight: bold; border-top: 2px solid #aaa; }
 
         .exercise-list { display: flex; flex-direction: column; gap: 15px; }
-        .exercise-card { display: flex; background-color: var(--input-bg); border: 1px solid var(--border-color); padding: 15px; gap: 20px; }
         
-        .exercise-img { width: 120px; height: 120px; object-fit: cover; border: 1px solid var(--border-color); }
-        .exercise-img.placeholder { display: flex; align-items: center; justify-content: center; background-color: var(--panel-bg); color: var(--text-muted); font-size: 12px; text-align: center; }
+        /* Stile Esercizio unificato ad Aero Glass blocky */
+        .exercise-card { display: flex; background: rgba(40, 40, 40, 0.6); border: 1px solid rgba(255,255,255,0.1); border-right: 1px solid #111; border-bottom: 1px solid #111; padding: 15px; gap: 20px; }
+        
+        .exercise-img { width: 120px; height: 120px; object-fit: cover; border: 1px solid #111; }
+        .exercise-img.placeholder { display: flex; align-items: center; justify-content: center; background: #222; color: #888; font-size: 12px; text-align: center; border: 1px dashed #555;}
 
         .exercise-details { flex-grow: 1; }
-        .exercise-title { font-size: 1.3em; margin: 0 0 10px 0; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
+        .exercise-title { font-size: 1.3em; margin: 0 0 10px 0; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
         
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-        .stat-box { background-color: var(--panel-bg); border: 1px solid var(--border-color); padding: 8px; text-align: center; font-size: 14px; }
-        .stat-box span { display: block; color: var(--text-muted); font-size: 11px; text-transform: uppercase; margin-bottom: 4px;}
-        .stat-box strong { font-size: 1.2em; }
+        .stat-box { background: #222; border: 1px solid #111; border-bottom: 1px solid #444; border-right: 1px solid #444; padding: 8px; text-align: center; font-size: 14px; }
+        .stat-box span { display: block; color: #aaa; font-size: 10px; text-transform: uppercase; margin-bottom: 4px;}
+        .stat-box strong { font-size: 1.2em; color: #fff;}
 
         .exercise-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
-        .tutorial-link { color: #cccccc; text-decoration: underline; font-size: 13px; }
+        .tutorial-link { color: #8cb4ff; text-decoration: underline; font-size: 13px; }
         .tutorial-link:hover { color: #ffffff; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; background-color: var(--panel-bg); border: 1px solid var(--border-color); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--border-color); background-color: #222; }
-        .modal-header h3 { margin: 0; font-size: 1.3em;}
-        .close-modal { background: none; border: none; font-size: 1.5em; color: var(--text-muted); padding: 0; }
-        .close-modal:hover { color: var(--text-main); background: none;}
-        .modal-body { padding: 20px; }
-        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { max-width: 500px; width: 95%; max-height: 90vh; overflow-y: auto; background: #333; border: 2px solid #555; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: linear-gradient(to right, #444, #222); padding: 10px 15px; margin: -20px -20px 20px -20px; border-bottom: 1px solid #111;}
+        .close-modal { background: none; border: none; font-size: 1.5em; color: white; cursor: pointer; padding: 0 10px; box-shadow: none;}
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-muted); font-weight: bold;}
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: #ddd;}
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
+        /* Media Query per impilare correttamente gli esercizi su smartphone */
         @media (max-width: 600px) {
-            .exercise-card { flex-direction: column; padding: 10px; }
-            .exercise-img { width: 100%; height: 180px; margin-bottom: 10px; }
+            .exercise-card { flex-direction: column; padding: 15px; }
+            .exercise-img { width: 100%; height: 200px; margin-bottom: 10px; }
             .stats-grid { gap: 5px; }
             .stat-box { padding: 6px 2px; }
             .stat-box span { font-size: 9px; letter-spacing: -0.5px; }
@@ -119,47 +96,40 @@
         <button class="tab-btn" id="tab-C" onclick="switchDay('C')">Giorno C</button>
     </div>
 
-    <div class="panel">
+    <div class="aero-glass">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin:0; border:none;" id="current-day-title">Esercizi - Giorno A</h2>
-            <button class="btn-primary" onclick="openModal('addExerciseModal')">+ Aggiungi Esercizio</button>
+            <button onclick="openModal('addExerciseModal')">+ Add</button>
         </div>
         
-        <div class="exercise-list" id="exerciseGrid">
-            </div>
+        <div class="exercise-list" id="exerciseGrid"></div>
     </div>
 </div>
 
 <div class="modal-overlay" id="addExerciseModal">
-    <div class="modal-content">
-        <div class="modal-header"><h3>Nuovo Esercizio</h3><button class="close-modal" onclick="closeModal('addExerciseModal')">&times;</button></div>
-        <div class="modal-body">
-            <div class="form-group"><label>Nome Esercizio</label><input type="text" id="e-name" placeholder="Es: Panca Piana"></div>
-            
-            <div class="grid-3">
-                <div class="form-group"><label>Serie</label><input type="number" id="e-sets" value="3"></div>
-                <div class="form-group"><label>Ripetizioni</label><input type="number" id="e-reps" value="10"></div>
-                <div class="form-group"><label>Carico</label><input type="number" id="e-weight" value="0"></div>
-            </div>
-
-            <div class="form-group" style="background-color: var(--input-bg); padding: 10px; border: 1px solid var(--border-color);">
-                <label>Carica Foto (Opzionale)</label><input type="file" id="e-img-file" accept="image/*">
-            </div>
-            
-            <div class="form-group"><label>Link Tutorial (Opzionale)</label><input type="text" id="e-link" placeholder="https://youtube.com/..."></div>
-            <div class="form-group"><label>Note</label><textarea id="e-notes" rows="3" placeholder="Pausa di 90 sec, focus negativa..."></textarea></div>
-            
-            <button class="btn-primary" onclick="addCustomExercise()" style="width: 100%; padding: 12px; margin-top: 10px;">Salva nel Database</button>
+    <div class="aero-glass modal-content">
+        <div class="modal-header"><h3 style="margin:0; border:none;">Nuovo Esercizio</h3><button class="close-modal" onclick="closeModal('addExerciseModal')">X</button></div>
+        
+        <div class="form-group"><label>Nome Esercizio</label><input type="text" id="e-name"></div>
+        <div class="grid-3">
+            <div class="form-group"><label>Serie</label><input type="number" id="e-sets" value="3"></div>
+            <div class="form-group"><label>Rips</label><input type="number" id="e-reps" value="10"></div>
+            <div class="form-group"><label>Carico</label><input type="number" id="e-weight" value="0"></div>
         </div>
+        <div class="form-group" style="background: rgba(0,0,0,0.3); padding: 10px; border: 1px inset #555;">
+            <label>Carica Foto</label><input type="file" id="e-img-file" accept="image/*">
+        </div>
+        <div class="form-group"><label>Link Tutorial</label><input type="text" id="e-link"></div>
+        <div class="form-group"><label>Note</label><textarea id="e-notes" rows="3"></textarea></div>
+        
+        <button onclick="addCustomExercise()" style="width: 100%; margin-top: 10px;">Salva Esercizio</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="viewNotesModal">
-    <div class="modal-content" style="max-width: 400px;">
-        <div class="modal-header"><h3 id="n-title">Note Esercizio</h3><button class="close-modal" onclick="closeModal('viewNotesModal')">&times;</button></div>
-        <div class="modal-body">
-            <div id="n-text" style="white-space: pre-wrap; line-height: 1.5; color: var(--text-main); font-size: 15px;"></div>
-        </div>
+    <div class="aero-glass modal-content" style="max-width: 400px;">
+        <div class="modal-header"><h3 id="n-title" style="margin:0; border:none;">Note Esercizio</h3><button class="close-modal" onclick="closeModal('viewNotesModal')">X</button></div>
+        <div id="n-text" style="white-space: pre-wrap; line-height: 1.5; color: #eee; font-size: 14px;"></div>
     </div>
 </div>
 
@@ -167,7 +137,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE
+    // INCOLLA QUI LA TUA API KEY
     const firebaseConfig = {
         apiKey: "AIzaSyBWtXTAYITN2HPYHFHDsGX-xSI96KulAoM",
         authDomain: "knapsack-diet.firebaseapp.com",
@@ -182,24 +152,15 @@
     let currentDay = 'A';
     let tempBase64Image = "";
 
-    try {
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        initApp();
-    } catch (e) {
-        console.error("Firebase non configurato.", e);
-    }
+    try { app = initializeApp(firebaseConfig); db = getFirestore(app); initApp(); } 
+    catch (e) { console.error("Firebase non configurato.", e); }
 
     function initApp() {
         onSnapshot(doc(db, "gym_plans", "user1"), (docSnap) => {
             if (docSnap.exists()) {
                 workoutPlan = docSnap.data();
-                if(!workoutPlan.A) workoutPlan.A = [];
-                if(!workoutPlan.B) workoutPlan.B = [];
-                if(!workoutPlan.C) workoutPlan.C = [];
-            } else {
-                workoutPlan = { A: [], B: [], C: [] };
-            }
+                if(!workoutPlan.A) workoutPlan.A = []; if(!workoutPlan.B) workoutPlan.B = []; if(!workoutPlan.C) workoutPlan.C = [];
+            } else { workoutPlan = { A: [], B: [], C: [] }; }
             renderExercises();
         });
     }
@@ -209,9 +170,7 @@
 
     window.switchDay = function(day) {
         currentDay = day;
-        document.getElementById('tab-A').classList.remove('active');
-        document.getElementById('tab-B').classList.remove('active');
-        document.getElementById('tab-C').classList.remove('active');
+        document.getElementById('tab-A').classList.remove('active'); document.getElementById('tab-B').classList.remove('active'); document.getElementById('tab-C').classList.remove('active');
         document.getElementById(`tab-${day}`).classList.add('active');
         document.getElementById('current-day-title').innerText = `Esercizi - Giorno ${day}`;
         renderExercises();
@@ -219,82 +178,65 @@
 
     document.getElementById('e-img-file').addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = event => tempBase64Image = event.target.result;
-            reader.readAsDataURL(file);
-        } else { tempBase64Image = ""; }
+        if (!file) { tempBase64Image = ""; return; }
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 600; const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                tempBase64Image = canvas.toDataURL('image/jpeg', 0.7);
+            }
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     });
 
     window.addCustomExercise = async function() {
-        if(!db) return alert("Configura prima Firebase!");
-        
-        const newEx = {
-            id: Date.now().toString(),
-            name: document.getElementById('e-name').value || "Esercizio Senza Nome",
-            sets: parseInt(document.getElementById('e-sets').value) || 0,
-            reps: parseInt(document.getElementById('e-reps').value) || 0,
-            weight: parseFloat(document.getElementById('e-weight').value) || 0,
-            img: tempBase64Image,
-            link: document.getElementById('e-link').value,
-            notes: document.getElementById('e-notes').value
-        };
-        
-        const updatedPlan = { ...workoutPlan };
-        updatedPlan[currentDay].push(newEx);
-        
-        await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
-        
-        closeModal('addExerciseModal');
-        ['e-name', 'e-link', 'e-notes', 'e-img-file'].forEach(id => document.getElementById(id).value = '');
-        ['e-sets', 'e-reps', 'e-weight'].forEach(id => document.getElementById(id).value = '0');
-        tempBase64Image = ""; 
+        if(!db) return alert("Configura Firebase!");
+        try {
+            const newEx = {
+                id: Date.now().toString(),
+                name: document.getElementById('e-name').value || "Senza Nome",
+                sets: parseInt(document.getElementById('e-sets').value) || 0,
+                reps: parseInt(document.getElementById('e-reps').value) || 0,
+                weight: parseFloat(document.getElementById('e-weight').value) || 0,
+                img: tempBase64Image, link: document.getElementById('e-link').value, notes: document.getElementById('e-notes').value
+            };
+            const updatedPlan = { ...workoutPlan }; updatedPlan[currentDay].push(newEx);
+            await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
+            
+            closeModal('addExerciseModal');
+            ['e-name', 'e-link', 'e-notes', 'e-img-file'].forEach(id => document.getElementById(id).value = '');
+            ['e-sets', 'e-reps', 'e-weight'].forEach(id => document.getElementById(id).value = '0');
+            tempBase64Image = ""; 
+        } catch (error) { alert("Errore: " + error.message); }
     };
 
     window.deleteExercise = async function(exId) {
-        if(confirm("Sei sicuro di voler rimuovere questo esercizio dal piano?")) {
-            const updatedPlan = { ...workoutPlan };
-            updatedPlan[currentDay] = updatedPlan[currentDay].filter(ex => ex.id !== exId);
-            await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
+        if(confirm("Rimuovere esercizio?")) {
+            try { const updatedPlan = { ...workoutPlan }; updatedPlan[currentDay] = updatedPlan[currentDay].filter(ex => ex.id !== exId); await setDoc(doc(db, "gym_plans", "user1"), updatedPlan); } 
+            catch (error) { alert("Errore: " + error.message); }
         }
     };
 
     window.viewNotes = function(notesText) {
-        document.getElementById('n-text').innerText = notesText || "Nessuna nota aggiunta per questo esercizio.";
+        document.getElementById('n-text').innerText = notesText || "Nessuna nota.";
         openModal('viewNotesModal');
     };
 
     function renderExercises() {
-        const grid = document.getElementById('exerciseGrid');
-        grid.innerHTML = '';
-        
+        const grid = document.getElementById('exerciseGrid'); grid.innerHTML = '';
         const currentList = workoutPlan[currentDay] || [];
-        
-        if(currentList.length === 0) {
-            grid.innerHTML = '<div style="padding: 20px; color: #a0a0a0; text-align: center; border: 1px dashed #4a4a4a;">Nessun esercizio presente in questo giorno. Clicca su "+ Aggiungi Esercizio" per iniziare.</div>';
-            return;
-        }
+        if(currentList.length === 0) { grid.innerHTML = '<div style="padding: 20px; color: #aaa; text-align: center; border: 1px dashed #555;">Nessun esercizio.</div>'; return; }
 
         currentList.forEach(ex => {
             const mediaHtml = ex.img ? `<img src="${ex.img}" class="exercise-img">` : `<div class="exercise-img placeholder">Nessuna Foto</div>`;
-            const linkHtml = ex.link ? `<a href="${ex.link}" target="_blank" class="tutorial-link">Vedi Tutorial &#8599;</a>` : `<span style="color:#444; font-size:13px;">Nessun link</span>`;
-
-            const card = document.createElement('div');
-            card.className = 'exercise-card';
-            card.innerHTML = `
-                ${mediaHtml}
-                <div class="exercise-details">
-                    <h3 class="exercise-title">${ex.name}</h3>
-                    <div class="stats-grid">
-                        <div class="stat-box"><span>Serie</span><strong>${ex.sets}</strong></div>
-                        <div class="stat-box"><span>Ripetizioni</span><strong>${ex.reps}</strong></div>
-                        <div class="stat-box"><span>Carico</span><strong>${ex.weight}</strong></div>
-                    </div>
-                    <div class="exercise-actions">
-                        <div>${linkHtml} <span style="color: #666; margin: 0 10px;">|</span> <a href="javascript:void(0)" onclick="viewNotes('${ex.notes.replace(/'/g, "\\'")}')" class="tutorial-link">Leggi Note</a></div>
-                        <button class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteExercise('${ex.id}')">Rimuovi</button>
-                    </div>
-                </div>`;
+            const linkHtml = ex.link ? `<a href="${ex.link}" target="_blank" class="tutorial-link">Tutorial &#8599;</a>` : `<span style="color:#555; font-size:13px;">No link</span>`;
+            const card = document.createElement('div'); card.className = 'exercise-card';
+            card.innerHTML = `${mediaHtml}<div class="exercise-details"><h3 class="exercise-title">${ex.name}</h3><div class="stats-grid"><div class="stat-box"><span>Serie</span><strong>${ex.sets}</strong></div><div class="stat-box"><span>Ripetizioni</span><strong>${ex.reps}</strong></div><div class="stat-box"><span>Carico</span><strong>${ex.weight}</strong></div></div><div class="exercise-actions"><div>${linkHtml} <span style="color: #444; margin: 0 10px;">|</span> <a href="javascript:void(0)" onclick="viewNotes('${ex.notes.replace(/'/g, "\\'")}')" class="tutorial-link">Note</a></div><button class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteExercise('${ex.id}')">Rimuovi</button></div></div>`;
             grid.appendChild(card);
         });
     }
