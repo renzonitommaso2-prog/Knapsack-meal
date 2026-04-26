@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Planner</title>
+    <style>
+        /* Base Styles & Gray Background */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #444444, #222222, #111111);
+            background-attachment: fixed;
+            color: #eeeeee;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background: rgba(40, 40, 40, 0.8);
+            border-bottom: 1px solid #111;
+            padding: 10px 20px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+        .top-nav a {
+            color: #ccc; text-decoration: none; font-size: 14px; padding: 5px 10px; border: 1px solid transparent;
+        }
+        .top-nav a:hover { background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; }
+        .top-nav a.active { background: rgba(255,255,255,0.15); border: 1px inset #555; color: #fff; font-weight: bold; }
+
+        /* Gray Aero Glass Effect - ZERO Rounded Edges */
+        .aero-glass {
+            background: rgba(80, 80, 80, 0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.6);
+            border-radius: 0;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Layout */
+        .container { max-width: 1200px; margin: auto; padding: 0 20px 40px 20px;}
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        
+        h1, h2, h3 { margin-top: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        
+        /* Inputs & Buttons */
+        input[type="number"], input[type="text"], input[type="file"], textarea {
+            background: rgba(200, 200, 200, 0.9);
+            border: 1px solid #111;
+            border-top: 2px solid #000;
+            border-left: 2px solid #000;
+            border-radius: 0;
+            padding: 6px;
+            color: #000;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus { outline: 1px dotted #ccc; background: #ffffff; }
+        
+        button {
+            background: linear-gradient(to bottom, #f0f0f0, #c0c0c0);
+            border: 1px solid #555;
+            border-right: 1px solid #111;
+            border-bottom: 1px solid #111;
+            border-radius: 0;
+            color: #000;
+            padding: 6px 15px;
+            cursor: pointer;
+            font-family: Tahoma, Geneva, sans-serif;
+            font-size: 13px;
+        }
+        button:hover { background: linear-gradient(to bottom, #ffffff, #d0d0d0); }
+        button:active { 
+            background: #b0b0b0; 
+            border: 1px solid #111;
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            padding: 7px 14px 5px 16px; 
+        }
+        
+        .btn-danger { background: linear-gradient(to bottom, #ff9999, #cc0000); color: white; border-color: #550000; }
+        .btn-danger:hover { background: linear-gradient(to bottom, #ffbbbb, #ee0000); }
+
+        /* Progress Bars */
+        .progress-container { margin-bottom: 15px; }
+        .progress-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; text-shadow: 1px 1px 1px #000; font-size: 12px;}
+        .progress-track {
+            background: #222; border: 1px solid #555; border-top: 1px solid #000; border-left: 1px solid #000;
+            border-radius: 0; height: 20px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(to bottom, #888888, #555555); width: 0%;
+            border-radius: 0; border-right: 1px solid rgba(255,255,255,0.5); border-top: 1px solid rgba(255,255,255,0.3);
+            box-sizing: border-box; transition: width 0.3s;
+        }
+        
+        .fill-target { background: linear-gradient(to bottom, #77cc77, #338833); } 
+        .fill-over { background: linear-gradient(to bottom, #cc7777, #883333); }
+
+        /* Recipe Grid */
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .recipe-card {
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: rgba(40, 40, 40, 0.6); border: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid #111; border-bottom: 1px solid #111; padding: 10px;
+        }
+        
+        .recipe-img {
+            width: 100%; height: 120px; object-fit: cover; border-radius: 0; margin-bottom: 10px; cursor: pointer; border: 1px solid #111;
+        }
+        .recipe-img.placeholder {
+            display: flex; align-items: center; justify-content: center;
+            background: #333; color: #aaa; font-size: 0.9em; border: 1px dashed #666;
+        }
+
+        .recipe-stats { font-size: 11px; margin: 10px 0; color: #ccc; }
+        .card-controls { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 5px; border: 1px solid #444;}
+        .qty-controls button { padding: 2px 8px; font-weight: bold; }
+        .qty-controls span { margin: 0 10px; font-weight: bold; font-size: 1.1em; }
+
+        /* Summary */
+        .summary-text { min-height: 100px; white-space: pre-wrap; margin-bottom: 10px; background: #1a1a1a !important; color: #ddd !important; border: 1px solid #555 !important;}
+
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content { max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; background: #333; border: 2px solid #555; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: linear-gradient(to right, #444, #222); padding: 5px 10px; margin: -20px -20px 20px -20px; border-bottom: 1px solid #111;}
+        .close-modal { background: none; border: none; font-size: 1.2em; color: white; cursor: pointer; padding: 0; box-shadow: none; font-weight: bold;}
+        .close-modal:hover { background: red; color: white; }
+        .form-group { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="meal-planner.html" class="active">Meal Planner</a>
+    <a href="gym-tracker.html">Gym Tracker</a>
+</nav>
+
+<div class="container">
+    <div class="grid-2">
+        <div class="aero-glass">
+            <h2>Target Settings</h2>
+            <div class="grid-2">
+                <div class="form-group"><label>Calories</label><input type="number" id="t-cal" value="3000"></div>
+                <div class="form-group"><label>Protein (g)</label><input type="number" id="t-pro" value="140"></div>
+                <div class="form-group"><label>Fats (g)</label><input type="number" id="t-fat" value="70"></div>
+                <div class="form-group"><label>Carbs (g)</label><input type="number" id="t-car" value="450"></div>
+            </div>
+            <button onclick="calculateProgress()">Update Goals</button>
+        </div>
+
+        <div class="aero-glass">
+            <h2>Daily Plan Summary</h2>
+            <textarea id="summaryArea" class="summary-text" readonly></textarea>
+            <button class="btn-danger" onclick="resetPlan()">Clear Plan Data</button>
+        </div>
+    </div>
+
+    <div class="aero-glass">
+        <h2>Current Progress</h2>
+        <div class="progress-container"><div class="progress-label"><span>Calories</span> <span id="lbl-cal">0 / 3000</span></div><div class="progress-track"><div class="progress-fill" id="bar-cal"></div></div></div>
+        <div class="progress-container"><div class="progress-label"><span>Protein</span> <span id="lbl-pro">0 / 140g</span></div><div class="progress-track"><div class="progress-fill" id="bar-pro"></div></div></div>
+        <div class="progress-container"><div class="progress-label"><span>Fats</span> <span id="lbl-fat">0 / 70g</span></div><div class="progress-track"><div class="progress-fill" id="bar-fat"></div></div></div>
+        <div class="progress-container"><div class="progress-label"><span>Carbs</span> <span id="lbl-car">0 / 450g</span></div><div class="progress-track"><div class="progress-fill" id="bar-car"></div></div></div>
+    </div>
+
+    <div class="aero-glass">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Recipe Library</h2>
+            <button onclick="openModal('addRecipeModal')">+ Add Custom Recipe</button>
+        </div>
+        <div class="recipe-grid" id="recipeGrid">
+            </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="addRecipeModal">
+    <div class="aero-glass modal-content">
+        <div class="modal-header"><h3 style="margin:0; border:none;">Add Recipe to Library</h3><button class="close-modal" onclick="closeModal('addRecipeModal')">X</button></div>
+        <div class="form-group"><label>Recipe Name</label><input type="text" id="r-name"></div>
+        <div class="form-group" style="background: rgba(0,0,0,0.3); padding: 10px; border: 1px inset #555;">
+            <label>Local Image File</label><input type="file" id="r-img-file" accept="image/*">
+        </div>
+        <div class="grid-2">
+            <div class="form-group"><label>Calories</label><input type="number" id="r-cal" value="0"></div>
+            <div class="form-group"><label>Protein (g)</label><input type="number" id="r-pro" value="0"></div>
+            <div class="form-group"><label>Fats (g)</label><input type="number" id="r-fat" value="0"></div>
+            <div class="form-group"><label>Carbs (g)</label><input type="number" id="r-car" value="0"></div>
+        </div>
+        <div class="form-group"><label>Instructions</label><textarea id="r-inst" rows="4"></textarea></div>
+        <button onclick="addCustomRecipe()" style="width: 100%;">Save to Library</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="viewRecipeModal">
+    <div class="aero-glass modal-content">
+        <div class="modal-header"><h3 id="v-name" style="margin:0; border:none;">Recipe Name</h3><button class="close-modal" onclick="closeModal('viewRecipeModal')">X</button></div>
+        <img id="v-img" style="width:100%; margin-bottom:15px; display:none; border: 1px solid #111;">
+        <div id="v-stats" style="margin-bottom: 15px; font-weight: bold; color: #ddd; font-size: 12px; background: #222; padding: 5px;"></div>
+        <div id="v-inst" style="white-space: pre-wrap; line-height: 1.5; color: #eee; font-size: 13px;"></div>
+        <button class="btn-danger" style="margin-top: 20px; width: 100%;" onclick="deleteCurrentViewedRecipe()">Delete from Database</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBWtXTAYITN2HPYHFHDsGX-xSI96KulAoM",
+        authDomain: "knapsack-diet.firebaseapp.com",
+        projectId: "knapsack-diet",
+        storageBucket: "knapsack-diet.firebasestorage.app",
+        messagingSenderId: "69576786295",
+        appId: "1:69576786295:web:b5b0584fc1b34a9b8ca172"
+    };
+
+
+    let app, db;
+    let recipes = [];
+    let plan = {};
+    let tempBase64Image = "";
+
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        initApp();
+    } catch (e) {
+        console.error("Firebase setup pending.", e);
+    }
+
+    function initApp() {
+        onSnapshot(collection(db, "recipes"), (snapshot) => {
+            recipes = [];
+            snapshot.forEach((doc) => {
+                recipes.push({ id: doc.id, ...doc.data() });
+            });
+            renderLibrary();
+            calculateProgress();
+        });
+
+        onSnapshot(doc(db, "plans", "user1"), (docSnap) => {
+            if (docSnap.exists()) {
+                plan = docSnap.data();
+            } else {
+                plan = {};
+            }
+            renderLibrary();
+            calculateProgress();
+        });
+    }
+
+    window.openModal = id => document.getElementById(id).style.display = 'flex';
+    window.closeModal = id => document.getElementById(id).style.display = 'none';
+
+    document.getElementById('r-img-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = event => tempBase64Image = event.target.result;
+            reader.readAsDataURL(file);
+        } else { tempBase64Image = ""; }
+    });
+
+    window.addCustomRecipe = async function() {
+        if(!db) return alert("Firebase is not configured yet.");
+        await addDoc(collection(db, "recipes"), {
+            name: document.getElementById('r-name').value || "Unnamed Recipe",
+            img: tempBase64Image,
+            cal: parseInt(document.getElementById('r-cal').value) || 0,
+            pro: parseInt(document.getElementById('r-pro').value) || 0,
+            fat: parseInt(document.getElementById('r-fat').value) || 0,
+            car: parseInt(document.getElementById('r-car').value) || 0,
+            inst: document.getElementById('r-inst').value || "No instructions."
+        });
+        
+        closeModal('addRecipeModal');
+        ['r-name', 'r-inst', 'r-img-file'].forEach(id => document.getElementById(id).value = '');
+        ['r-cal', 'r-pro', 'r-fat', 'r-car'].forEach(id => document.getElementById(id).value = '0');
+        tempBase64Image = ""; 
+    };
+
+    let viewingRecipeId = null;
+    window.viewRecipe = function(id) {
+        const r = recipes.find(rec => rec.id === id);
+        if (!r) return;
+        viewingRecipeId = id;
+        document.getElementById('v-name').textContent = r.name;
+        document.getElementById('v-stats').textContent = `Cal: ${r.cal} | Pro: ${r.pro}g | Fat: ${r.fat}g | Carbs: ${r.car}g`;
+        document.getElementById('v-inst').textContent = r.inst;
+        const imgEl = document.getElementById('v-img');
+        if (r.img) { imgEl.src = r.img; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+        openModal('viewRecipeModal');
+    };
+
+    window.deleteCurrentViewedRecipe = async function() {
+        if(confirm("Delete this recipe from your library?")) {
+            await deleteDoc(doc(db, "recipes", viewingRecipeId));
+            const newPlan = { ...plan };
+            delete newPlan[viewingRecipeId];
+            await setDoc(doc(db, "plans", "user1"), newPlan);
+            closeModal('viewRecipeModal');
+        }
+    };
+
+    window.updateQty = async function(id, change) {
+        if(!db) return alert("Firebase is not configured yet.");
+        const currentQty = plan[id] || 0;
+        let newQty = currentQty + change;
+        if (newQty < 0) newQty = 0;
+        
+        const newPlan = { ...plan, [id]: newQty };
+        await setDoc(doc(db, "plans", "user1"), newPlan);
+    };
+
+    window.resetPlan = async function() {
+        if(confirm("Clear today's plan?")) await setDoc(doc(db, "plans", "user1"), {});
+    };
+
+    window.calculateProgress = function() {
+        const targets = {
+            cal: parseInt(document.getElementById('t-cal').value) || 0,
+            pro: parseInt(document.getElementById('t-pro').value) || 0,
+            fat: parseInt(document.getElementById('t-fat').value) || 0,
+            car: parseInt(document.getElementById('t-car').value) || 0
+        };
+
+        let current = { cal: 0, pro: 0, fat: 0, car: 0 };
+        let summaryLines = [];
+
+        recipes.forEach(r => {
+            const qty = plan[r.id];
+            if (qty > 0) {
+                current.cal += r.cal * qty; current.pro += r.pro * qty;
+                current.fat += r.fat * qty; current.car += r.car * qty;
+                summaryLines.push(`[${qty}] x ${r.name}`);
+            }
+        });
+
+        document.getElementById('summaryArea').value = summaryLines.length > 0 ? summaryLines.join('\n') : "No recipes queued.";
+
+        updateBar('cal', current.cal, targets.cal, '');
+        updateBar('pro', current.pro, targets.pro, 'g');
+        updateBar('fat', current.fat, targets.fat, 'g');
+        updateBar('car', current.car, targets.car, 'g');
+    };
+
+    function updateBar(macro, current, target, unit) {
+        const bar = document.getElementById(`bar-${macro}`);
+        document.getElementById(`lbl-${macro}`).textContent = `${current}${unit} / ${target}${unit}`;
+        let percent = target > 0 ? (current / target) * 100 : 0;
+        bar.style.width = `${percent > 100 ? 100 : percent}%`;
+        bar.className = 'progress-fill';
+        if (percent >= 95 && percent <= 105) bar.classList.add('fill-target');
+        else if (percent > 105) bar.classList.add('fill-over');
+    }
+
+    function renderLibrary() {
+        const grid = document.getElementById('recipeGrid');
+        grid.innerHTML = '';
+        recipes.forEach(r => {
+            const qty = plan[r.id] || 0;
+            const mediaHtml = r.img ? `<img src="${r.img}" class="recipe-img" onclick="viewRecipe('${r.id}')" title="Details">` : `<div class="recipe-img placeholder" onclick="viewRecipe('${r.id}')">No Image</div>`;
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            card.innerHTML = `
+                <div>${mediaHtml}<h3 style="font-size: 14px; margin-bottom: 5px; padding:0; border:none;">${r.name}</h3>
+                <div class="recipe-stats">C: ${r.cal} | P: ${r.pro} | F: ${r.fat} | C: ${r.car}</div></div>
+                <div class="card-controls">
+                    <div class="qty-controls"><button onclick="updateQty('${r.id}', -1)">-</button><span>${qty}</span><button onclick="updateQty('${r.id}', 1)">+</button></div>
+                </div>`;
+            grid.appendChild(card);
+        });
+    }
+</script>
+</body>
+</html>
