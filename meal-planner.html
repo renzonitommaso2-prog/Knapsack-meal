@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#222222">
     <title>Meal Planner</title>
     <style>
-        /* Base Styles & Gray Background */
         body {
             margin: 0;
             padding: 0;
             font-family: Tahoma, Geneva, Verdana, sans-serif;
+            /* Rimosso background-attachment: fixed; */
             background: linear-gradient(135deg, #444444, #222222, #111111);
-            background-attachment: fixed;
             color: #eeeeee;
             min-height: 100vh;
         }
 
-        /* Top Navigation Bar */
         .top-nav {
             background: rgba(40, 40, 40, 0.8);
             border-bottom: 1px solid #111;
@@ -25,7 +25,14 @@
             gap: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
             margin-bottom: 20px;
+            /* NUOVO: Permette lo scroll orizzontale su mobile */
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch; 
         }
+
+        /* Nasconde la barra di scorrimento nella top-nav */
+        .top-nav::-webkit-scrollbar { display: none; }
         .top-nav a {
             color: #ccc; text-decoration: none; font-size: 14px; padding: 5px 10px; border: 1px solid transparent;
         }
