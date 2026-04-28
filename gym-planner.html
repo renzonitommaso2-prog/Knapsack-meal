@@ -23,7 +23,6 @@
         
         h1, h2, h3 { margin-top: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
         
-        /* Font-size 16px per evitare lo zoom, UI stile Vista forum */
         input[type="number"], input[type="text"], input[type="file"], textarea {
             background: rgba(200, 200, 200, 0.9); border: 1px solid #111; border-top: 2px solid #000; border-left: 2px solid #000;
             border-radius: 0; padding: 8px; color: #000; width: 100%; box-sizing: border-box; margin-top: 5px;
@@ -32,18 +31,18 @@
         input:focus, textarea:focus { outline: 1px dotted #ccc; background: #ffffff; }
         
         button { background: linear-gradient(to bottom, #f0f0f0, #c0c0c0); border: 1px solid #555; border-right: 1px solid #111; border-bottom: 1px solid #111; border-radius: 0; color: #000; padding: 8px 15px; cursor: pointer; font-family: Tahoma, Geneva, sans-serif; font-size: 14px; font-weight: bold;}
-        button:hover { background: linear-gradient(to bottom, #ffffff, #d0d0d0); }
-        button:active { background: #b0b0b0; border: 1px solid #111; border-top: 1px solid #000; border-left: 1px solid #000; padding: 9px 14px 7px 16px; }
+        button:hover:not(:disabled) { background: linear-gradient(to bottom, #ffffff, #d0d0d0); }
+        button:active:not(:disabled) { background: #b0b0b0; border: 1px solid #111; border-top: 1px solid #000; border-left: 1px solid #000; padding: 9px 14px 7px 16px; }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+        
         .btn-danger { background: linear-gradient(to bottom, #ff9999, #cc0000); color: white; border-color: #550000; }
+        .btn-edit { background: linear-gradient(to bottom, #99bbff, #0044cc); color: white; border-color: #002266; }
 
-        /* Tabs divise esattamente in 3 colonne senza scroll */
         .tabs { display: flex; width: 100%; margin-bottom: 20px; border-bottom: 1px solid #555; }
         .tab-btn { flex: 1; background: rgba(40, 40, 40, 0.6); border: 1px solid #111; border-bottom: none; color: #aaa; padding: 12px 0; font-size: 14px; cursor: pointer; text-align: center; }
         .tab-btn.active { background: rgba(80, 80, 80, 0.5); color: #fff; font-weight: bold; border-top: 2px solid #aaa; }
 
         .exercise-list { display: flex; flex-direction: column; gap: 15px; }
-        
-        /* Stile Esercizio unificato ad Aero Glass blocky */
         .exercise-card { display: flex; background: rgba(40, 40, 40, 0.6); border: 1px solid rgba(255,255,255,0.1); border-right: 1px solid #111; border-bottom: 1px solid #111; padding: 15px; gap: 20px; }
         
         .exercise-img { width: 120px; height: 120px; object-fit: cover; border: 1px solid #111; }
@@ -57,9 +56,12 @@
         .stat-box span { display: block; color: #aaa; font-size: 10px; text-transform: uppercase; margin-bottom: 4px;}
         .stat-box strong { font-size: 1.2em; color: #fff;}
 
-        .exercise-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
         .tutorial-link { color: #8cb4ff; text-decoration: underline; font-size: 13px; }
         .tutorial-link:hover { color: #ffffff; }
+
+        /* Nuovo layout controlli */
+        .exercise-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;}
+        .btn-group { display: flex; gap: 10px; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { max-width: 500px; width: 95%; max-height: 90vh; overflow-y: auto; background: #333; border: 2px solid #555; }
@@ -69,15 +71,15 @@
         .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: #ddd;}
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
-        /* Media Query per impilare correttamente gli esercizi su smartphone */
         @media (max-width: 600px) {
-            .exercise-card { flex-direction: column; padding: 15px; }
-            .exercise-img { width: 100%; height: 200px; margin-bottom: 10px; }
+            .exercise-card { flex-direction: column; padding: 15px; gap: 10px;}
+            .exercise-img { width: 100%; height: 200px; margin-bottom: 5px; }
             .stats-grid { gap: 5px; }
             .stat-box { padding: 6px 2px; }
             .stat-box span { font-size: 9px; letter-spacing: -0.5px; }
-            .exercise-actions { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .exercise-actions button { width: 100%; }
+            .exercise-controls { flex-direction: column; gap: 15px; align-items: stretch; }
+            .btn-group { justify-content: space-between; width: 100%; }
+            .btn-group button { flex: 1; }
         }
     </style>
 </head>
@@ -99,7 +101,7 @@
     <div class="aero-glass">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin:0; border:none;" id="current-day-title">Esercizi - Giorno A</h2>
-            <button onclick="openModal('addExerciseModal')">+ Add</button>
+            <button onclick="openAddModal()">+ Add</button>
         </div>
         
         <div class="exercise-list" id="exerciseGrid"></div>
@@ -108,7 +110,7 @@
 
 <div class="modal-overlay" id="addExerciseModal">
     <div class="aero-glass modal-content">
-        <div class="modal-header"><h3 style="margin:0; border:none;">Nuovo Esercizio</h3><button class="close-modal" onclick="closeModal('addExerciseModal')">X</button></div>
+        <div class="modal-header"><h3 style="margin:0; border:none;" id="modal-title">Nuovo Esercizio</h3><button class="close-modal" onclick="closeModal('addExerciseModal')">X</button></div>
         
         <div class="form-group"><label>Nome Esercizio</label><input type="text" id="e-name"></div>
         <div class="grid-3">
@@ -117,12 +119,12 @@
             <div class="form-group"><label>Carico</label><input type="number" id="e-weight" value="0"></div>
         </div>
         <div class="form-group" style="background: rgba(0,0,0,0.3); padding: 10px; border: 1px inset #555;">
-            <label>Carica Foto</label><input type="file" id="e-img-file" accept="image/*">
+            <label>Carica Foto (Lascia vuoto per non cambiarla)</label><input type="file" id="e-img-file" accept="image/*">
         </div>
         <div class="form-group"><label>Link Tutorial</label><input type="text" id="e-link"></div>
         <div class="form-group"><label>Note</label><textarea id="e-notes" rows="3"></textarea></div>
         
-        <button onclick="addCustomExercise()" style="width: 100%; margin-top: 10px;">Salva Esercizio</button>
+        <button onclick="saveExercise()" style="width: 100%; margin-top: 10px;">Salva Esercizio</button>
     </div>
 </div>
 
@@ -151,6 +153,7 @@
     let workoutPlan = { A: [], B: [], C: [] };
     let currentDay = 'A';
     let tempBase64Image = "";
+    let editingExerciseId = null; // Traccia se stiamo modificando o aggiungendo
 
     try { app = initializeApp(firebaseConfig); db = getFirestore(app); initApp(); } 
     catch (e) { console.error("Firebase non configurato.", e); }
@@ -178,7 +181,7 @@
 
     document.getElementById('e-img-file').addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (!file) { tempBase64Image = ""; return; }
+        if (!file) return; // Non cancellare l'immagine esistente se annulli
         const reader = new FileReader();
         reader.onload = function(event) {
             const img = new Image();
@@ -194,24 +197,65 @@
         reader.readAsDataURL(file);
     });
 
-    window.addCustomExercise = async function() {
+    // Reset campi e apri modale in modalità Aggiunta
+    window.openAddModal = function() {
+        editingExerciseId = null;
+        tempBase64Image = "";
+        document.getElementById('modal-title').innerText = "Nuovo Esercizio";
+        ['e-name', 'e-link', 'e-notes', 'e-img-file'].forEach(id => document.getElementById(id).value = '');
+        ['e-sets', 'e-reps', 'e-weight'].forEach(id => document.getElementById(id).value = '0');
+        openModal('addExerciseModal');
+    }
+
+    // Carica dati e apri modale in modalità Modifica
+    window.editExercise = function(exId) {
+        const ex = workoutPlan[currentDay].find(e => e.id === exId);
+        if (!ex) return;
+        
+        editingExerciseId = exId;
+        tempBase64Image = ex.img || ""; // Mantiene l'immagine vecchia se non ne carichi una nuova
+        
+        document.getElementById('modal-title').innerText = "Modifica Esercizio";
+        document.getElementById('e-name').value = ex.name;
+        document.getElementById('e-sets').value = ex.sets;
+        document.getElementById('e-reps').value = ex.reps;
+        document.getElementById('e-weight').value = ex.weight;
+        document.getElementById('e-link').value = ex.link || "";
+        document.getElementById('e-notes').value = ex.notes || "";
+        document.getElementById('e-img-file').value = ''; // Resetta il campo file
+        
+        openModal('addExerciseModal');
+    }
+
+    // Unica funzione per salvare (gestisce sia aggiunta che modifica)
+    window.saveExercise = async function() {
         if(!db) return alert("Configura Firebase!");
         try {
-            const newEx = {
-                id: Date.now().toString(),
+            const exerciseData = {
+                id: editingExerciseId ? editingExerciseId : Date.now().toString(),
                 name: document.getElementById('e-name').value || "Senza Nome",
                 sets: parseInt(document.getElementById('e-sets').value) || 0,
                 reps: parseInt(document.getElementById('e-reps').value) || 0,
                 weight: parseFloat(document.getElementById('e-weight').value) || 0,
-                img: tempBase64Image, link: document.getElementById('e-link').value, notes: document.getElementById('e-notes').value
+                img: tempBase64Image, 
+                link: document.getElementById('e-link').value, 
+                notes: document.getElementById('e-notes').value
             };
-            const updatedPlan = { ...workoutPlan }; updatedPlan[currentDay].push(newEx);
-            await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
             
+            const updatedPlan = { ...workoutPlan };
+            
+            if (editingExerciseId) {
+                // Sostituisci l'esercizio esistente
+                const idx = updatedPlan[currentDay].findIndex(e => e.id === editingExerciseId);
+                updatedPlan[currentDay][idx] = exerciseData;
+            } else {
+                // Aggiungi nuovo
+                updatedPlan[currentDay].push(exerciseData);
+            }
+            
+            await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
             closeModal('addExerciseModal');
-            ['e-name', 'e-link', 'e-notes', 'e-img-file'].forEach(id => document.getElementById(id).value = '');
-            ['e-sets', 'e-reps', 'e-weight'].forEach(id => document.getElementById(id).value = '0');
-            tempBase64Image = ""; 
+            editingExerciseId = null; // Resetta stato
         } catch (error) { alert("Errore: " + error.message); }
     };
 
@@ -222,6 +266,27 @@
         }
     };
 
+    // Funzione per spostare l'esercizio Su o Giù
+    window.moveExercise = async function(exId, direction) {
+        const list = [...workoutPlan[currentDay]];
+        const idx = list.findIndex(e => e.id === exId);
+        if (idx === -1) return;
+
+        // direction: -1 (su), 1 (giù)
+        if (direction === -1 && idx > 0) {
+            [list[idx - 1], list[idx]] = [list[idx], list[idx - 1]]; // Swap
+        } else if (direction === 1 && idx < list.length - 1) {
+            [list[idx + 1], list[idx]] = [list[idx], list[idx + 1]]; // Swap
+        } else {
+            return; // Limite raggiunto
+        }
+
+        try {
+            const updatedPlan = { ...workoutPlan, [currentDay]: list };
+            await setDoc(doc(db, "gym_plans", "user1"), updatedPlan);
+        } catch (error) { alert("Errore nello spostamento: " + error.message); }
+    };
+
     window.viewNotes = function(notesText) {
         document.getElementById('n-text').innerText = notesText || "Nessuna nota.";
         openModal('viewNotesModal');
@@ -230,13 +295,44 @@
     function renderExercises() {
         const grid = document.getElementById('exerciseGrid'); grid.innerHTML = '';
         const currentList = workoutPlan[currentDay] || [];
-        if(currentList.length === 0) { grid.innerHTML = '<div style="padding: 20px; color: #aaa; text-align: center; border: 1px dashed #555;">Nessun esercizio.</div>'; return; }
+        if(currentList.length === 0) { grid.innerHTML = '<div style="padding: 20px; color: #aaa; text-align: center; border: 1px dashed #555;">Nessun esercizio. Clicca su + Add per iniziare.</div>'; return; }
 
-        currentList.forEach(ex => {
+        currentList.forEach((ex, index) => {
             const mediaHtml = ex.img ? `<img src="${ex.img}" class="exercise-img">` : `<div class="exercise-img placeholder">Nessuna Foto</div>`;
             const linkHtml = ex.link ? `<a href="${ex.link}" target="_blank" class="tutorial-link">Tutorial &#8599;</a>` : `<span style="color:#555; font-size:13px;">No link</span>`;
+            
+            // Disabilita i tasti freccia se si è in cima o in fondo
+            const upDisabled = index === 0 ? 'disabled' : '';
+            const downDisabled = index === currentList.length - 1 ? 'disabled' : '';
+
             const card = document.createElement('div'); card.className = 'exercise-card';
-            card.innerHTML = `${mediaHtml}<div class="exercise-details"><h3 class="exercise-title">${ex.name}</h3><div class="stats-grid"><div class="stat-box"><span>Serie</span><strong>${ex.sets}</strong></div><div class="stat-box"><span>Ripetizioni</span><strong>${ex.reps}</strong></div><div class="stat-box"><span>Carico</span><strong>${ex.weight}</strong></div></div><div class="exercise-actions"><div>${linkHtml} <span style="color: #444; margin: 0 10px;">|</span> <a href="javascript:void(0)" onclick="viewNotes('${ex.notes.replace(/'/g, "\\'")}')" class="tutorial-link">Note</a></div><button class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteExercise('${ex.id}')">Rimuovi</button></div></div>`;
+            card.innerHTML = `
+                ${mediaHtml}
+                <div class="exercise-details">
+                    <h3 class="exercise-title">${ex.name}</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box"><span>Serie</span><strong>${ex.sets}</strong></div>
+                        <div class="stat-box"><span>Ripetizioni</span><strong>${ex.reps}</strong></div>
+                        <div class="stat-box"><span>Carico</span><strong>${ex.weight}</strong></div>
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        ${linkHtml} <span style="color: #444; margin: 0 10px;">|</span> 
+                        <a href="javascript:void(0)" onclick="viewNotes('${ex.notes.replace(/'/g, "\\'")}')" class="tutorial-link">Note</a>
+                    </div>
+                    
+                    <div class="exercise-controls">
+                        <div class="btn-group">
+                            <button style="padding: 6px 15px;" onclick="moveExercise('${ex.id}', -1)" ${upDisabled}>▲</button>
+                            <button style="padding: 6px 15px;" onclick="moveExercise('${ex.id}', 1)" ${downDisabled}>▼</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-edit" style="padding: 6px 12px; font-size: 12px;" onclick="editExercise('${ex.id}')">Modifica</button>
+                            <button class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteExercise('${ex.id}')">Rimuovi</button>
+                        </div>
+                    </div>
+                </div>`;
             grid.appendChild(card);
         });
     }
